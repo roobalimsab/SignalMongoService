@@ -6,6 +6,7 @@ var port = 9090;
 var Signal = require('./signal');
 var jsonfile = require('jsonfile');
 var mkdirp = require('mkdirp');
+var PythonShell = require('python-shell');
 
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
@@ -32,10 +33,26 @@ app.post('/api/collectSignals', function(req, res) {
 		var filePath = directory + "/signal.json";
 		Signal.find({"locationName": locationName}).exec(function(error, signals) {
 			jsonfile.writeFile(filePath, signals, function(err) {
+				console.log("in final success");
 				res.send("Successfully created " + filePath);
 			});
 		});
 	});	
+});
+
+app.get('/api/fetchCurrentLocation', function(req, res) {
+	var pyshell = new PythonShell('trial_svm.py');
+	var location = "";
+	pyshell.send(req.query.currentSignal);	
+	pyshell.on('message', function (message) {
+		location = message;
+	});
+
+	pyshell.end(function (err) {
+  		if (err) throw err;
+  		console.log('finished');
+		res.send(location);
+	});
 });
 
 app.get('/', function(req, res) {
