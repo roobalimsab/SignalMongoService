@@ -1,5 +1,5 @@
 from sklearn.datasets import load_files
-mysignals=load_files('/Users/roobab/signal_data_sets')
+mysignals=load_files('signal_data_sets')
 from sklearn.feature_extraction.text import CountVectorizer
 count_vect = CountVectorizer()
 X_train_counts = count_vect.fit_transform(mysignals.data)

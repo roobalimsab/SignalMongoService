@@ -33,7 +33,7 @@ app.post('/api/collectSignals', function(req, res) {
 		var filePath = directory + "/signal.json";
 		Signal.find({"locationName": locationName}).exec(function(error, signals) {
 			jsonfile.writeFile(filePath, signals, function(err) {
-				console.log("in final success");
+				console.log("in file create success");
 				res.send("Successfully created " + filePath);
 			});
 		});
