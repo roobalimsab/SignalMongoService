@@ -41,17 +41,22 @@ app.post('/api/collectSignals', function(req, res) {
 });
 
 app.get('/api/fetchCurrentLocation', function(req, res) {
+	var locationArray = [];
 	var pyshell = new PythonShell('trial_svm.py');
-	var location = "";
-	pyshell.send(req.query.currentSignal);	
+	var signalArray = req.query.currentSignal;
+	signalArray.forEach(function(signal) {
+		pyshell.send(signal);
+	});
 	pyshell.on('message', function (message) {
-		location = message;
+		console.log("message in fetch:", message);
+		locationArray.push(message);
 	});
 
 	pyshell.end(function (err) {
   		if (err) throw err;
   		console.log('finished');
-		res.send(location);
+		console.log("lcoationarray: ", locationArray);
+		res.send(locationArray);
 	});
 });
 
