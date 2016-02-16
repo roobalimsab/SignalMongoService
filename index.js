@@ -30,7 +30,7 @@ app.post('/api/collectSignals', function(req, res) {
 		if(err) {
 			console.log(err);
 		}
-		var filePath = directory + "/signal.json";
+		var filePath = directory + '/' + makeRandomString();
 		Signal.find({"locationName": locationName}).exec(function(error, signals) {
 			jsonfile.writeFile(filePath, signals, function(err) {
 				console.log("in file create success");
@@ -39,6 +39,16 @@ app.post('/api/collectSignals', function(req, res) {
 		});
 	});	
 });
+
+var makeRandomString = function() {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+    for( var i=0; i < 5; i++ )
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return text;
+}
 
 app.get('/api/fetchCurrentLocation', function(req, res) {
 	var locationArray = [];
