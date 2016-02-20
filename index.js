@@ -8,8 +8,8 @@ var jsonfile = require('jsonfile');
 var mkdirp = require('mkdirp');
 var PythonShell = require('python-shell');
 
-app.use(bodyParser.json());
-app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.json({ type: 'application/json' }));
 app.use(bodyParser.urlencoded({'extended':'true'}));
 app.use(methodOverride('X-HTTP-Method-Override'));
 
@@ -50,18 +50,14 @@ var makeRandomString = function() {
     return text;
 }
 
-app.get('/api/fetchCurrentLocation', function(req, res) {
-	console.log("in fetch current locaion")
+app.post('/api/fetchCurrentLocation', function(req, res) {
 	var location = "";
 	var pyshell = new PythonShell('trial_svm.py');
-	var signalArray = req.query.currentSignal;
-	console.log("signalArray:: ", signalArray);
+	var signalArray = req.body;
 	signalArray.forEach(function(signal) {
-		console.log("inpyshell send")
 		pyshell.send(signal);
 	});
 	pyshell.on('message', function (message) {
-		console.log("message in fetch:", message);
 		location = message;
 	});
 
@@ -69,7 +65,7 @@ app.get('/api/fetchCurrentLocation', function(req, res) {
   		if (err) throw err;
   		console.log('finished');
 		console.log("lcoation", location);
-		res.send(location);
+		res.json(location);
 	});
 });
 
