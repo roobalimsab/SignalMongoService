@@ -15,6 +15,7 @@ aps: [{
 	BSSID: String,
 	level: Number,
 	frequency: Number,
+	capabilities: String,
 	channelWidth: Number,
 	centerFreq0: Number,
 	centerFreq1: Number,
