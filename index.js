@@ -61,6 +61,7 @@ app.get('/api/fetchCurrentLocation', function(req, res) {
 	pyshell.end(function (err) {
   		if (err) throw err;
   		console.log('finished');
+  		console.log('location:', location);
 		res.json(location);
 	});
 });
