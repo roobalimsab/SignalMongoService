@@ -51,25 +51,22 @@ var makeRandomString = function() {
 }
 
 app.get('/api/fetchCurrentLocation', function(req, res) {
-	console.log("in fetch current locaion")
-	var location = "";
+	var locationArray = [];
 	var pyshell = new PythonShell('trial_svm.py');
 	var signalArray = req.query.currentSignal;
-	console.log("signalArray:: ", signalArray);
 	signalArray.forEach(function(signal) {
-		console.log("inpyshell send")
 		pyshell.send(signal);
 	});
 	pyshell.on('message', function (message) {
 		console.log("message in fetch:", message);
-		location = message;
+		locationArray.push(message);
 	});
 
 	pyshell.end(function (err) {
   		if (err) throw err;
   		console.log('finished');
-		console.log("lcoation", location);
-		res.send(location);
+		console.log("lcoationarray: ", locationArray);
+		res.send(locationArray);
 	});
 });
 

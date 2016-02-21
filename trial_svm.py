@@ -10,18 +10,9 @@ X_train_tfidf = tfidf_transformer.fit_transform(X_train_counts)
 X_train_tfidf.shape
 from sklearn.svm import SVC
 clf = SVC()
-#from sklearn.neighbors import KNeighborsClassifier
-#clf = KNeighborsClassifier(n_neighbors=2)
 clf.fit(X_train_tfidf, mysignals.target)
-i = 0
-docs_new = []
-while(i < 25):
-	docs_new.append('{}'.format(raw_input()))
-	i += 1
+docs_new=['{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input())]
 X_new_counts = count_vect.transform(docs_new)
 X_new_tfidf = tfidf_transformer.transform(X_new_counts)
 predicted = clf.predict(X_new_tfidf)
-def most_common(lst):
-    return max(set(lst), key=lst.count)
-category = most_common(predicted.tolist())
-print(mysignals.target_names[category])
+for category in predicted:print(mysignals.target_names[category]) 
