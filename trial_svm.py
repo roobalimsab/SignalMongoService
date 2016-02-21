@@ -15,7 +15,7 @@ clf = SVC()
 clf.fit(X_train_tfidf, mysignals.target)
 i = 0
 docs_new = []
-while(i < 15):
+while(i < 25):
 	docs_new.append('{}'.format(raw_input()))
 	i += 1
 X_new_counts = count_vect.transform(docs_new)
