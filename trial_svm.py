@@ -11,7 +11,9 @@ X_train_tfidf.shape
 from sklearn.svm import SVC
 clf = SVC()
 clf.fit(X_train_tfidf, mysignals.target)
-docs_new=['{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input()), '{}'.format(raw_input())]
+currentSignal = raw_input()
+docs_new=['{}'.format(currentSignal)]
+print(docs_new)
 X_new_counts = count_vect.transform(docs_new)
 X_new_tfidf = tfidf_transformer.transform(X_new_counts)
 predicted = clf.predict(X_new_tfidf)
