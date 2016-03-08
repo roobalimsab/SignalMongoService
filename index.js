@@ -49,7 +49,7 @@ app.post('/api/collectSignals', function(req, res) {
 		if(err) {
 			console.log(err);
 		}
-		var filePath = directory + '/' + makeRandomString();
+		var filePath = directory + '/' + makeDateAndTimeString();
 
 		//**********************To collect filtered fields of the wifi signal object in the signal_data_sets folder************
 		jsonfile.writeFile(filePath, signalsArray, function(err) {
@@ -70,15 +70,10 @@ app.post('/api/collectSignals', function(req, res) {
 	});	
 });
 
-var makeRandomString = function() {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-    for( var i=0; i < 5; i++ )
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-
-    return text;
-}
+var makeDateAndTimeString = function() {
+	var date = new Date();
+	return date.getDate() + ":" + date.getHours() + ":" + date.getMinutes();
+};
 
 app.get('/api/fetchCurrentLocation', function(req, res) {
 	var pyshell = new PythonShell('trial_svm.py');
