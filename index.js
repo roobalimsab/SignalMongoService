@@ -7,6 +7,7 @@ var Signal = require('./signal');
 var jsonfile = require('jsonfile');
 var mkdirp = require('mkdirp');
 var PythonShell = require('python-shell');
+var signalsArray = [];
 
 app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
@@ -14,14 +15,32 @@ app.use(bodyParser.urlencoded({'extended':'true'}));
 app.use(methodOverride('X-HTTP-Method-Override'));
 
 app.post('/api/signals', function(req, res) {
-	var signal = new Signal(req.body);
+	populateSignalsArray(req.body.aps);
+	dumpIntoMongo(req.body);	
+	res.send('Dumped');
+});
+
+var populateSignalsArray = function(aps) {
+	var locationSpecificParsedSignals = getLocationSpecificParsedSignals(aps);
+	signalsArray.push(locationSpecificParsedSignals);
+};
+
+var dumpIntoMongo = function(signalBody) {
+	var signal = new Signal(signalBody);
 	signal.save(function(err) {
 		if(err) {
-			res.send(err);
+			console.log(err);
 		}
 	});
-	res.json(signal);
-});
+};
+
+var getLocationSpecificParsedSignals = function(aps) {
+	var parsedSignalArray = [];
+	aps.forEach(function(ap) {
+		parsedSignalArray.push({BSSID: ap.BSSID, level: ap.level});
+	});
+	return parsedSignalArray;
+};
 
 app.post('/api/collectSignals', function(req, res) {
 	var locationName = req.body.locationName;
@@ -31,12 +50,23 @@ app.post('/api/collectSignals', function(req, res) {
 			console.log(err);
 		}
 		var filePath = directory + '/' + makeRandomString();
-		Signal.find({"locationName": locationName}).exec(function(error, signals) {
-			jsonfile.writeFile(filePath, signals, function(err) {
-				console.log("in file create success");
-				res.send("Successfully created " + filePath);
-			});
+
+		//**********************To collect filtered fields of the wifi signal object in the signal_data_sets folder************
+		jsonfile.writeFile(filePath, signalsArray, function(err) {
+			console.log("in file create success");
+			res.send("Successfully created " + filePath);
+			signalsArray = [];
 		});
+		//*********************************************************************************************************************
+
+		// *********************To collect the whole wifi signal object in the signal_data_sets folder************************* 
+		//Signal.find({"locationName": locationName}).exec(function(error, signals) {
+		//	jsonfile.writeFile(filePath, signals, function(err) {
+		//		console.log("in file create success");
+		//		res.send("Successfully created " + filePath);
+		//	});
+		//});
+		//*********************************************************************************************************************
 	});	
 });
 
